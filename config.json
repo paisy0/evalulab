@@ -1,0 +1,11 @@
+{
+  "mapping": {
+    "user_question": "query",
+    "system_response": "answer",
+    "generated_sql": "sql",
+    "source_doc_ids": "retrieved_docs",
+    "relevant_doc_ids": "relevant_docs",
+    "eval_type": "type",
+    "keywords": "expected_keywords"
+  }
+}
