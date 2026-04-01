@@ -1,20 +1,16 @@
-# AI Eval Lab
-
-Database içinde tutulan AI system outputs için hafif bir evaluation pipeline.
-
-Bu repository answer, SQL veya retrieval result üretmez. Database içinde zaten var olan satırları okur, evaluate eder ve report üretir.
+# Evaluation Pipeline 
 
 ## Mevcut Kapsam
 
-Şu anda implement edilenler:
+Şu anki hali:
 
 - Retrieval evaluator
 - SQL evaluator
 - Text evaluator
-- Postgres, MySQL ve SQLite loader'ları
+- Postgres, MySQL ve SQLite loader'ları ya da JSON/CSV dosya
 - Result reporter
 
-Desteklenen metrics:
+Bu aşamada baktığı metrikler:
 
 | Evaluator | Metrics |
 | :--- | :--- |
@@ -22,7 +18,25 @@ Desteklenen metrics:
 | **SQL** | Syntax validity, keyword presence |
 | **Text** | Keyword coverage, answer length, consistency |
 
-## Bu Repo Ne Yapar
+
+## Roadmap
+
+### Tamamlananlar
+
+- [x] Retrieval, SQL, text evaluators + DB loader + reporter
+
+### Sonraki Adımlar
+
+- [ ] Synthetic test data generation (RAGAS TestsetGenerator)
+- [ ] NDCG & MRR deep dive, embedding-based similarity
+- [ ] LLM-as-Judge (hallucination detection, quality scoring)
+- [ ] Consistency & adversarial eval
+- [ ] Observability (Langfuse), regression eval, full pipeline
+- [ ] CI/CD integration (Promptfoo), A/B testing, DeepEval
+
+
+
+## Şu an nasıl çalışıyor?
 
 Pipeline şu akışla çalışır:
 
@@ -30,8 +44,8 @@ Pipeline şu akışla çalışır:
 2. Source query çalıştırır ya da evaluator row'larını file içinden alır.
 3. DB input kullanılıyorsa DB column'larını evaluator schema'ya map eder.
 4. Her row'u `type` alanına göre doğru evaluator'a yollar.
-5. Dashboard basar.
-6. İstenirse [reports](/C:/Users/ordox/Desktop/ai-eval-lab/reports) altına CSV ve JSON report yazar.
+5. Dashboard çıkartır.
+6. İstenirse [reports](/C:/Users/useruserseninuser/Desktop/ai-eval-lab/reports) altına CSV ve JSON report yazar.
 
 Pipeline mevcut output'ları evaluate eder.
 
@@ -151,9 +165,9 @@ Her row'da olması gerekenler:
 - expected keywords
 - reference answer
 
-Gerekli mapping veya gerekli value eksikse pipeline sessizce zayıf sonuç üretmek yerine fail-fast hata verir.
+Gerekli mapping veya gerekli value eksikse pipeline boş/uydurma sonuç üretmek yerine fail-fast hata verir.
 
-## Kabul Edilen List Format'ları
+## Kabul Edilen List Formatlar:
 
 Bu alanlar JSON array ya da comma-separated string olarak tutulabilir:
 
@@ -173,7 +187,7 @@ doc_1,doc_2
 
 ## Örnek Mapping
 
-Eğer tablon şu column'lara sahipse:
+Eğer tablonda şu kolonlar varsa:
 
 - `user_question`
 - `system_response`
@@ -185,7 +199,7 @@ Eğer tablon şu column'lara sahipse:
 - `gold_answer`
 - `top_k`
 
-o zaman `.env` şu şekilde olabilir:
+ `.env` şuna benzemeli:
 
 ```env
 DB_HOST=localhost
@@ -202,7 +216,7 @@ EVAL_COL_RETRIEVED=source_doc_ids
 EVAL_COL_RELEVANT=relevant_doc_ids
 EVAL_COL_TYPE=eval_type
 EVAL_COL_KEYWORDS=keywords
-EVAL_COL_REFERENCE_ANSWER=gold_answer
+EVAL_COL_REFERENCE_ANSWER=gold_answer(yok ki::))
 EVAL_COL_K=top_k
 ```
 
@@ -340,52 +354,26 @@ JSON/CSV input için gerekli field'lar yukarıdaki row contract ile aynıdır.
 
 ## Reports
 
-Reporter stdout'a küçük bir dashboard basar ve `--no-save` kullanılmazsa şunları yazar:
+Reporter stdout'a küçük bir dashboard çıkartır ve `--no-save` kullanılmazsa şu çıktıları verir:
 
 - `reports/eval_results_<timestamp>.csv`
 - `reports/eval_results_<timestamp>.json`
 
 ## Test
 
-Tüm testleri çalıştır:
+Tüm testleri çalıştırmak için:
 
 ```bash
 python -m pytest tests -q
 ```
 
-Bu workspace içindeki güncel test durumu: `25 passed`
+Benim güncel test durumu: `25 passed`
 
-## Limitations
+## Kısıtlar
 
-Bu repo şu aşamada bilinçli olarak dar kapsamlı tutuldu.
+Bu repo geliştirme aşamasında.
 
 - Output'ları evaluate eder; output üretmez.
 - SQL evaluation syntax ve keyword bazlıdır, result-set bazlı değildir.
 - Text consistency, reference answer column'una bağlıdır.
 - Retrieval quality, database içindeki retrieved ve relevant doc ID'lerinin doğruluğuna bağlıdır.
-
-## Roadmap
-
-### Tamamlananlar
-
-- [x] Retrieval, SQL, text evaluators + DB loader + reporter
-
-### Sonraki Adımlar
-
-- [ ] Synthetic test data generation (RAGAS TestsetGenerator)
-- [ ] NDCG & MRR deep dive, embedding-based similarity
-- [ ] LLM-as-Judge (hallucination detection, quality scoring)
-- [ ] Consistency & adversarial eval
-- [ ] Observability (Langfuse), regression eval, full pipeline
-- [ ] CI/CD integration (Promptfoo), A/B testing, DeepEval
-
-## Özet
-
-Bu proje şu anda bir evaluator pipeline MVP'si.
-
-Şunlar için iyi bir temel sağlar:
-
-- retrieval output'larını skorlamak
-- generated SQL'in shape ve required structure tarafını kontrol etmek
-- generated text answer'ları skorlamak
-- database-backed daha büyük bir evaluation platform inşa etmek
