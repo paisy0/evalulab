@@ -9,7 +9,7 @@ print(f"Python : {sys.version.split()[0]}")
 installed = []
 missing = []
 
-for pkg in ["ragas", "deepeval", "anthropic", "pandas"]:
+for pkg in ["ragas", "deepeval", "apisağlayıcısı", "pandas"]:
     try:
         __import__(pkg)
         installed.append(pkg)
@@ -21,5 +21,5 @@ if installed:
 if missing:
     print(f"Missing   : {', '.join(missing)}")
 
-key = os.getenv("ANTHROPIC_API_KEY")
+key = os.getenv("blabla_API_KEY")
 print(f"API Key   : {'found' if key else 'NOT FOUND'}")
