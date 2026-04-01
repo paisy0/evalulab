@@ -42,7 +42,7 @@ Bu aşamada baktığı metrikler:
 
 - Modern pipeline'larda metin tutarlılığı (consistency), LLM as a Judge kullanılarak anlamsal olarak yapıyormuş, ben nasıl yapabilirim bakacağım.
 
-- SQL Değerlendirmesi Execution (Çalıştırma) Yapmıyor: Araç sadece "SELECT id FROM uyeler" doğru bir SQL syntax'ı mı? diye bakıyor. Asıl veritabanında id diye bir kolon var mı veya çalıştırıldığında hata veriyor mu kontrol edemiyor. Doğruluk (Accuracy) denetimi yok, sadece şekil denetimi var.
+- SQL Değerlendirmesi Execution Yapmıyor: Araç sadece "SELECT id FROM uyeler" doğru bir SQL syntax'ı mı? diye bakıyor. Asıl veritabanında id diye bir kolon var mı veya çalıştırıldığında hata veriyor mu kontrol edemiyor. Doğruluk (Accuracy) denetimi yok, sadece şekil denetimi var.
 
 - Eğer testlerin hiçbiri geçemezse bile kodun sonunda süreç Exit Code 0 ile sorunsuzmuş gibi kapanıyor.
 
