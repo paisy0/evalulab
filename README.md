@@ -40,6 +40,7 @@ Results are printed to the terminal and saved to `reports/` as CSV + JSON.
 
 ⚙️ DB Column Mapping
 main.py'deki mapping'i şemaya uygun olarak değiştir:
+
 mapping = {
     "user_question":   "query",
     "system_response": "answer",
