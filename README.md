@@ -411,3 +411,54 @@ JSON örneği:
   {
     "type": "retrieval",
     "query": "What is the refund policy?",
+    "retrieved": ["doc_1", "doc_2"],
+    "relevant": ["doc_1"],
+    "k": 2
+  },
+  {
+    "type": "sql",
+    "query": "Total sales in 2026",
+    "sql": "SELECT SUM(amount) FROM sales WHERE year = 2026",
+    "expected_keywords": ["SELECT", "SUM", "FROM", "WHERE"]
+  },
+  {
+    "type": "text",
+    "query": "Summarize the support policy",
+    "answer": "Support is available on weekdays and critical issues are prioritized.",
+    "expected_keywords": ["support", "weekdays", "critical"],
+    "reference_answer": "Support is available during weekdays and urgent issues are prioritized."
+  }
+]
+```
+
+CSV örneği:
+
+```csv
+type,query,sql,expected_keywords
+sql,Total sales in 2026,"SELECT SUM(amount) FROM sales WHERE year = 2026","SELECT,SUM,FROM,WHERE"
+```
+
+JSON/CSV input için gerekli field'lar yukarıdaki row contract ile aynıdır.
+
+## Reports
+
+Reporter stdout'a bir dashboard çıkartır ve `--no-save` kullanılmazsa şu çıktıları verir:
+
+- `reports/eval_results_<timestamp>.csv`
+- `reports/eval_results_<timestamp>.json`
+
+Dashboard şunları gösterir:
+
+- Toplam / passed / failed / rate
+- Evaluator türüne göre breakdown
+- Retrieval ortalamaları (avg precision, recall, NDCG)
+- Fail eden case'lerin listesi
+- raporların tam dosya yolu terminale yazdırılıyor
+
+## Test
+
+Tüm testleri çalıştırmak için:
+
+```bash
+python -m pytest tests -q
+```
