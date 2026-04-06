@@ -51,7 +51,7 @@ Bu aşamada baktığı metrikler:
   - ✅ düzeltildi: `[A-Za-z0-9_]` olarak güncellendi. (`sql_eval.py`, `text_eval.py`)
 
 - ~~`check_sql_keywords()` vacuous truth: boş keyword listesi gelince `all_present: False` dönüyordu. mantıksal olarak boş kümenin tüm elemanları her koşulu sağlar, yani `True` olmalı.~~
-  - ✅ düzeltildi: boş keyword listesinde artık `all_present: True` dönüyor.
+  - ✅ düzeltildi: boş keyword listesinde artık `all_present: True` dönüyor. -İlginç-
 
 - ~~`UnknownEvalType` boş parametre: `query` parametresi alıyordu ama hata mesajında hiç kullanmıyordu.~~
   - ✅ düzeltildi: boş parametre kaldırıldı. (`src/exceptions.py`)
