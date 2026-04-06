@@ -41,10 +41,6 @@ class UnknownLoader(EvalLabError):
 
 
 class UnknownEvalType(EvalLabError):
-<<<<<<< HEAD
     def __init__(self, eval_type: str):
-=======
-    def __init__(self, eval_type: str, query: str = "?"):
->>>>>>> e5c9149d041f26918e905242a3234353cdd94e48
         self.eval_type = eval_type
         super().__init__(f"Unknown eval type: {eval_type}")

@@ -20,13 +20,10 @@ class MySQLLoader(BaseLoader):
 
     def connect(self) -> None:
         port = db_cfg.mysql_port
-<<<<<<< HEAD
         if not db_cfg.name:
             raise ConnectionFailed("mysql", db_cfg.host, port, "DB_NAME is not set in .env")
         if not db_cfg.user:
             raise ConnectionFailed("mysql", db_cfg.host, port, "DB_USER is not set in .env")
-=======
->>>>>>> e5c9149d041f26918e905242a3234353cdd94e48
         try:
             self._conn = mysql.connector.connect(
                 host=db_cfg.host,

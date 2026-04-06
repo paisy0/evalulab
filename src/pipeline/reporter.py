@@ -40,7 +40,6 @@ def _print_dashboard(results: list[dict]) -> None:
     failed = total - passed
     rate = passed / total if total else 0
 
-    # --- Group by eval_type ---
     type_stats: dict[str, dict] = {}
     for r in results:
         et = r.get("eval_type", "unknown")
@@ -50,7 +49,6 @@ def _print_dashboard(results: list[dict]) -> None:
         if r.get("passed") is True:
             type_stats[et]["passed"] += 1
 
-    # --- Retrieval averages ---
     retrieval_results = [r for r in results if r.get("eval_type") == "retrieval"]
     avg_precision = avg_recall = avg_ndcg = None
     if retrieval_results:
@@ -69,7 +67,6 @@ def _print_dashboard(results: list[dict]) -> None:
     print(f"  Time    : {datetime.now().strftime('%Y-%m-%d %H:%M')}")
     print("-" * 52)
 
-    # --- Breakdown by type ---
     print("  Breakdown:")
     for et, stats in sorted(type_stats.items()):
         t_total = stats["total"]
@@ -77,7 +74,6 @@ def _print_dashboard(results: list[dict]) -> None:
         t_rate = t_passed / t_total if t_total else 0
         print(f"    {et:12s} : {t_passed}/{t_total} ({t_rate:.0%})")
 
-    # --- Retrieval averages ---
     if avg_precision is not None:
         print("-" * 52)
         print("  Retrieval Averages:")
@@ -113,12 +109,9 @@ def run_report(results: list[dict], *, save: bool = True) -> dict | None:
     _save_csv(results, csv_path)
     _save_json(results, json_path)
 
-<<<<<<< HEAD
     print(f"  Reports saved:")
     print(f"    CSV  -> {csv_path}")
     print(f"    JSON -> {json_path}")
     print()
 
-=======
->>>>>>> e5c9149d041f26918e905242a3234353cdd94e48
     return {"csv": display_path(csv_path), "json": display_path(json_path)}

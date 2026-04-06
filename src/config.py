@@ -6,18 +6,14 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-<<<<<<< HEAD
 from src.exceptions import ConfigurationError
 
-=======
->>>>>>> e5c9149d041f26918e905242a3234353cdd94e48
 load_dotenv()
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 REPORTS_DIR = PROJECT_ROOT / "reports"
 
 
-<<<<<<< HEAD
 def _parse_int(env_var: str, default: int) -> int:
     raw = os.getenv(env_var, "").strip()
     if not raw:
@@ -34,21 +30,11 @@ def _parse_int(env_var: str, default: int) -> int:
 class DBConfig:
     host: str = field(default_factory=lambda: os.getenv("DB_HOST", "localhost"))
     port: int = field(default_factory=lambda: _parse_int("DB_PORT", 5432))
-=======
-@dataclass(frozen=True)
-class DBConfig:
-    host: str = field(default_factory=lambda: os.getenv("DB_HOST", "localhost"))
-    port: int = field(default_factory=lambda: int(os.getenv("DB_PORT", "5432")))
->>>>>>> e5c9149d041f26918e905242a3234353cdd94e48
     name: str = field(default_factory=lambda: os.getenv("DB_NAME", ""))
     user: str = field(default_factory=lambda: os.getenv("DB_USER", ""))
     password: str = field(default_factory=lambda: os.getenv("DB_PASSWORD", ""))
     sqlite_path: str = field(default_factory=lambda: os.getenv("DB_SQLITE_PATH", "").strip())
-<<<<<<< HEAD
     mysql_port: int = field(default_factory=lambda: _parse_int("DB_MYSQL_PORT", 3306))
-=======
-    mysql_port: int = field(default_factory=lambda: int(os.getenv("DB_MYSQL_PORT", "3306")))
->>>>>>> e5c9149d041f26918e905242a3234353cdd94e48
     timeout: int = 10
 
     def __repr__(self) -> str:
@@ -107,7 +93,6 @@ def get_source_config() -> EvalSourceConfig:
     return EvalSourceConfig()
 
 
-<<<<<<< HEAD
 def get_db_config() -> DBConfig:
     return DBConfig()
 
@@ -116,7 +101,5 @@ def get_thresholds() -> EvalThresholds:
     return EvalThresholds()
 
 
-=======
->>>>>>> e5c9149d041f26918e905242a3234353cdd94e48
 db = DBConfig()
 thresholds = EvalThresholds()

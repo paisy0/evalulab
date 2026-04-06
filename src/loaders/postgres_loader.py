@@ -20,13 +20,10 @@ class PostgresLoader(BaseLoader):
         self._cur = None
 
     def connect(self) -> None:
-<<<<<<< HEAD
         if not db_cfg.name:
             raise ConnectionFailed("postgres", db_cfg.host, db_cfg.port, "DB_NAME is not set in .env")
         if not db_cfg.user:
             raise ConnectionFailed("postgres", db_cfg.host, db_cfg.port, "DB_USER is not set in .env")
-=======
->>>>>>> e5c9149d041f26918e905242a3234353cdd94e48
         try:
             self._conn = psycopg2.connect(
                 host=db_cfg.host,

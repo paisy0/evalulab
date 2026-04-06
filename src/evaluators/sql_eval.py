@@ -43,11 +43,7 @@ def _contains_keyword(sql: str, keyword: str) -> bool:
     parts = [re.escape(part) for part in keyword.strip().split() if part.strip()]
     if not parts:
         return True
-<<<<<<< HEAD
     pattern = r"(?<![A-Za-z0-9_])" + r"\s+".join(parts) + r"(?![A-Za-z0-9_])"
-=======
-    pattern = r"(?<![A-Z0-9_])" + r"\s+".join(parts) + r"(?![A-Z0-9_])"
->>>>>>> e5c9149d041f26918e905242a3234353cdd94e48
     return re.search(pattern, sql, flags=re.IGNORECASE) is not None
 
 
@@ -56,11 +52,7 @@ def check_sql_keywords(sql: str, expected: list[str]) -> dict:
     if not keywords:
         return {
             "checked": False,
-<<<<<<< HEAD
             "all_present": True,
-=======
-            "all_present": False,
->>>>>>> e5c9149d041f26918e905242a3234353cdd94e48
             "missing": [],
         }
 

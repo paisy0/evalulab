@@ -17,11 +17,7 @@ def _contains_keyword(text: str, keyword: str) -> bool:
     parts = [re.escape(part) for part in keyword.strip().split() if part.strip()]
     if not parts:
         return False
-<<<<<<< HEAD
     pattern = r"(?<![A-Za-z0-9_])" + r"\s+".join(parts) + r"(?![A-Za-z0-9_])"
-=======
-    pattern = r"(?<![A-Z0-9_])" + r"\s+".join(parts) + r"(?![A-Z0-9_])"
->>>>>>> e5c9149d041f26918e905242a3234353cdd94e48
     return re.search(pattern, text, flags=re.IGNORECASE) is not None
 
 
@@ -56,11 +52,7 @@ def check_length(
 
 
 def check_consistency(answer_a: str, answer_b: str) -> dict:
-<<<<<<< HEAD
     score = SequenceMatcher(None, answer_a.split(), answer_b.split()).ratio()
-=======
-    score = SequenceMatcher(None, answer_a, answer_b).ratio()
->>>>>>> e5c9149d041f26918e905242a3234353cdd94e48
     return {
         "similarity": round(score, 4),
         "consistent": score >= thresholds.consistency_min,
