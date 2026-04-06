@@ -50,7 +50,7 @@ Bu aşamada baktığı metrikler:
 - ~~Regex lookbehind sorunu: keyword kontrolü `[A-Z0-9_]` kullanıyordu, `re.IGNORECASE` lookbehind'ı etkilemediği için küçük harfli kelimelerin içinde yanlış eşleşme yapıyordu. (`"preselect"` içinde `"select"` buluyordu örneğin.)~~
   - ✅ düzeltildi: `[A-Za-z0-9_]` olarak güncellendi. (`sql_eval.py`, `text_eval.py`)
 
-- `check_sql_keywords()` boş keyword listesi: `all_present: False` döner, `checked: False` ile birlikte. yani "kontrol edilmedi" anlamına gelir. mantıksal olarak tartışmalı ama pipeline'ın geri kalanı zaten `checked` flag'ine bakıyor, bu yüzden pratikte sorun yaratmıyor.
+- `check_sql_keywords()` boş keyword listesi: `all_present: False` döner, `checked: False` ile birlikte. yani "kontrol edilmedi" anlamına gelir. pipeline zaten `checked` flag'ine baktığı için pratikte sorun yaratmıyor.
 
 - ~~`UnknownEvalType` boş parametre: `query` parametresi alıyordu ama hata mesajında hiç kullanmıyordu.~~
   - ✅ düzeltildi: boş parametre kaldırıldı. (`src/exceptions.py`)
@@ -61,7 +61,7 @@ Bu aşamada baktığı metrikler:
 - ~~Keyword Matching Token Bazlıdır: Keyword kontrolü tam kelime sınırı (word boundary) kullanırdı ama büyük/küçük harf farkına bakıyordu, yani `"select"` → `"SELECT"` eşleşmiyordu.~~
   - ✅ düzeltildi: büyük/küçük harf farkı artık yok sayılıyor. ama kök/çekim farkı hâlâ eşleşmiyor, yani `"refund"` ≠ `"refunds"`, keyword yazarken cevaptaki tam formu kullanmak gerekir.
 
-- ~~SQL evaluator çoklu statement'ı valid sayıyordu: `SELECT 1; DROP TABLE x` gibi birden fazla statement içeren output `syntax_valid: True` dönebiliyordu.~~
+- ~~SQL evaluator çoklu statement'ı valid sayıyordu: `SELECT 1; DROP TABLE x` gibi birden fazla statement içeren output `syntax_valid: True` alabiliyordu.~~
   - ✅ düzeltildi: birden fazla statement gelirse `syntax_valid: False` döner. (`sql_eval.py`)
 
 - ~~File input alias eksikliği: JSON/CSV'de `retrieved_docs` veya `relevant_docs` anahtarı kullanılırsa list normalization uygulanmıyor, comma-separated string gelince validation patlar.~~
@@ -464,4 +464,8 @@ Dashboard şunları gösterir:
 
 ## Test
 
-Tüm testleri çalışt�
+Tüm testleri çalıştırmak için:
+
+```bash
+python -m pytest tests -q
+```
