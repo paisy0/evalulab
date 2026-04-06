@@ -37,7 +37,7 @@ Bu aşamada baktığı metrikler:
   Yapay Zekanın Cevabı: "Server kapandı."
   ```
 
-  SequenceMatcher bu ikisini hâlâ farklı görüp FAIL verebilir.
+  SequenceMatcher bu ikisini farklı görüp FAIL verebilir.
 
 - ~~Keyword Matching Token Bazlıdır: Keyword kontrolü tam kelime sınırı (word boundary) kullanırdı ama büyük/küçük harf farkına bakıyordu, yani `"select"` → `"SELECT"` eşleşmiyordu.~~
   - ✅ düzeltildi: büyük/küçük harf farkı artık yok sayılıyor. ama kök/çekim farkı hâlâ eşleşmiyor, yani `"refund"` ≠ `"refunds"`, keyword yazarken cevaptaki tam formu kullanmak gerekir.
@@ -410,4 +410,4 @@ JSON örneği:
 [
   {
     "type": "retrieval",
-    "query": "What is the refund policy?",
+    "query": "What is the refund policy?",
