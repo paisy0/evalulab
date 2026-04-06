@@ -58,4 +58,4 @@ class PostgresLoader(BaseLoader):
             self._cur.execute(query)
             return [dict(row) for row in self._cur.fetchall()]
         except psycopg2.Error as e:
-            raise QueryFailed(query[:200], str(e)) from e
+            raise QueryFailed(str(e)) from e

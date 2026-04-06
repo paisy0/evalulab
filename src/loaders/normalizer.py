@@ -38,7 +38,7 @@ def to_list(value) -> list:
             if isinstance(parsed, list):
                 return _clean_list(parsed)
         except (json.JSONDecodeError, ValueError):
-            pass
+            log.warning("value looks like JSON array but failed to parse, falling back to comma-split: %s", stripped[:80])
 
     return [item.strip() for item in stripped.split(",") if item.strip()]
 

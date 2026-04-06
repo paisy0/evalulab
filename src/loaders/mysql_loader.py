@@ -54,6 +54,6 @@ class MySQLLoader(BaseLoader):
             raise NotConnected()
         try:
             self._cur.execute(query)
-            return self._cur.fetchall()
+            return [dict(row) for row in self._cur.fetchall()]
         except mysql.connector.Error as e:
-            raise QueryFailed(query[:200], str(e)) from e
+            raise QueryFailed(str(e)) from e

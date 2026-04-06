@@ -93,15 +93,15 @@ def _print_dashboard(results: list[dict]) -> None:
     print()
 
 
-def run_report(results: list[dict], *, save: bool = True) -> dict | None:
+def run_report(results: list[dict], *, save: bool = True) -> dict:
     if not results:
         log.warning("no results to report")
-        return None
+        return {"saved": False}
 
     _print_dashboard(results)
 
     if not save:
-        return None
+        return {"saved": False}
 
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     csv_path = _make_path("csv", ts)
@@ -114,4 +114,4 @@ def run_report(results: list[dict], *, save: bool = True) -> dict | None:
     print(f"    JSON -> {json_path}")
     print()
 
-    return {"csv": display_path(csv_path), "json": display_path(json_path)}
+    return {"saved": True, "csv": display_path(csv_path), "json": display_path(json_path)}

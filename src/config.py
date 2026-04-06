@@ -14,27 +14,32 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 REPORTS_DIR = PROJECT_ROOT / "reports"
 
 
-def _parse_int(env_var: str, default: int) -> int:
+def _parse_int(env_var: str, default: int, *, min_val: int = 0, max_val: int | None = None) -> int:
     raw = os.getenv(env_var, "").strip()
     if not raw:
         return default
     try:
-        return int(raw)
+        value = int(raw)
     except ValueError:
         raise ConfigurationError(
             f"Invalid value for {env_var}: '{raw}' is not an integer."
         )
+    if value < min_val or (max_val is not None and value > max_val):
+        raise ConfigurationError(
+            f"Invalid value for {env_var}: {value} is out of range ({min_val}-{max_val})."
+        )
+    return value
 
 
 @dataclass(frozen=True)
 class DBConfig:
     host: str = field(default_factory=lambda: os.getenv("DB_HOST", "localhost"))
-    port: int = field(default_factory=lambda: _parse_int("DB_PORT", 5432))
+    port: int = field(default_factory=lambda: _parse_int("DB_PORT", 5432, min_val=1, max_val=65535))
     name: str = field(default_factory=lambda: os.getenv("DB_NAME", ""))
     user: str = field(default_factory=lambda: os.getenv("DB_USER", ""))
     password: str = field(default_factory=lambda: os.getenv("DB_PASSWORD", ""))
     sqlite_path: str = field(default_factory=lambda: os.getenv("DB_SQLITE_PATH", "").strip())
-    mysql_port: int = field(default_factory=lambda: _parse_int("DB_MYSQL_PORT", 3306))
+    mysql_port: int = field(default_factory=lambda: _parse_int("DB_MYSQL_PORT", 3306, min_val=1, max_val=65535))
     timeout: int = 10
 
     def __repr__(self) -> str:
@@ -101,5 +106,4 @@ def get_thresholds() -> EvalThresholds:
     return EvalThresholds()
 
 
-db = DBConfig()
 thresholds = EvalThresholds()

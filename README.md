@@ -19,9 +19,10 @@ Bu aşamada baktığı metrikler:
 | **SQL** | Syntax validity, keyword presence |
 | **Text** | Keyword coverage, answer length, consistency |
 
-## Kısıtlar ve BUG veya featurelar :D
+## Kısıtlar (Aktif)
 
 - Hiçbir şey üretmez. Yani bir LLM'e bağlanıp cevap almaz, veritabanında SQL sorgusu çalıştırıp sonuç üretmez. Asıl sistem bir soruya cevap verdiyse, bir SQL generate ettiyse veya RAG sistemin bazı dokümanlar getirdiyse; bu araç sadece o kayıtları DB'den veya bir JSON/CSV'den okur, kendi kurallarından geçirir ve sisteme "şunlarda başarılısın, şunlarda rezilsin" diyen bir karne çıkartır.
+
 - Hatasızlığa Zorlar. Kolon eksikse ya da tanımlar bozuksa geçip "0 aldı" demek yerine direkt sistemi patlatıp hatayı gösteriyor, bu da false-positive değerlendirmelerin önüne geçer(?).
 
 - SQL evaluation syntax ve keyword bazlıdır, result-set bazlı değildir.
@@ -41,6 +42,12 @@ Bu aşamada baktığı metrikler:
 
 - SQL Değerlendirmesi Execution Yapmıyor: Araç sadece "SELECT id FROM uyeler" doğru bir SQL syntax'ı mı? diye bakıyor. Asıl veritabanında id diye bir kolon var mı veya çalıştırıldığında hata veriyor mu kontrol edemiyor. Doğruluk (Accuracy) denetimi yok, sadece şekil denetimi var.
 
+- Keyword matching token bazlıdır, kök/çekim farkı eşleşmiyor: `"refund"` ≠ `"refunds"`, keyword yazarken cevaptaki tam formu kullanmak gerekir.
+
+- `check_sql_keywords()` boş keyword listesi: `all_present: False` döner, `checked: False`. yani "kontrol edilmedi" anlamına gelir. pipeline zaten `checked` flag'ine baktığı için pratikte sorun yaratmıyor.
+
+## Düzeltilen ve Eklenen Şeyler :D
+
 - ~~Metin Değerlendirmesi Fazla İlkel (Lexical vs. Semantic): text_eval içinde kullanılan difflib.SequenceMatcher sadece harf ve kelime eşleşmesine bakar.~~
   - ✅ iyileştirildi: artık karakter bazlı değil kelime bazlı karşılaştırıyor. hâlâ anlamsal değil ama eskisi kadar mağara adamı da değil.
 
@@ -50,16 +57,14 @@ Bu aşamada baktığı metrikler:
 - ~~Regex lookbehind sorunu: keyword kontrolü `[A-Z0-9_]` kullanıyordu, `re.IGNORECASE` lookbehind'ı etkilemediği için küçük harfli kelimelerin içinde yanlış eşleşme yapıyordu. (`"preselect"` içinde `"select"` buluyordu örneğin.)~~
   - ✅ düzeltildi: `[A-Za-z0-9_]` olarak güncellendi. (`sql_eval.py`, `text_eval.py`)
 
-- `check_sql_keywords()` boş keyword listesi: `all_present: False` döner, `checked: False`. yani "kontrol edilmedi" anlamına gelir. pipeline zaten `checked` flag'ine baktığı için pratikte sorun yaratmıyor.
-
 - ~~`UnknownEvalType` boş parametre: `query` parametresi alıyordu ama hata mesajında hiç kullanmıyordu.~~
   - ✅ düzeltildi: boş parametre kaldırıldı. (`src/exceptions.py`)
 
 - ~~`run_tests.py` gereksiz script: sadece `pytest tests -q`'yu subprocess ile sarıyordu, doğrudan pytest çalıştırmaktan farkı yoktu.~~
   - ✅ silindi. artık testler için direkt `python -m pytest tests -q` kullanılabilir.
 
-- ~~Keyword Matching Token Bazlıdır: Keyword kontrolü tam kelime sınırı (word boundary) kullanırdı ama büyük/küçük harf farkına bakıyordu, yani `"select"` → `"SELECT"` eşleşmiyordu.~~
-  - ✅ düzeltildi: büyük/küçük harf farkı artık yok sayılıyor. ama kök/çekim farkı hâlâ eşleşmiyor, yani `"refund"` ≠ `"refunds"`, keyword yazarken cevaptaki tam formu kullanmak gerekir.
+- ~~Keyword Matching büyük/küçük harf farkına bakıyordu: `"select"` → `"SELECT"` eşleşmiyordu.~~
+  - ✅ düzeltildi: büyük/küçük harf farkı artık yok sayılıyor.
 
 - ~~SQL evaluator çoklu statement'ı valid sayıyordu: `SELECT 1; DROP TABLE x` gibi birden fazla statement içeren output `syntax_valid: True` alabiliyordu.~~
   - ✅ düzeltildi: birden fazla statement gelirse `syntax_valid: False` döner. (`sql_eval.py`)
@@ -75,6 +80,27 @@ Bu aşamada baktığı metrikler:
 
 - ~~`--fail-under` sınır kontrolü yoktu: `-1` veya `150` gibi geçersiz değerler sessizce çalışıyordu.~~
   - ✅ düzeltildi: 0-100 dışında değer gelirse argüman parse sonrası hata verip exit 1 dönüyor. (`main.py`)
+
+- ~~DB loader'ların fetch exception handler'ları eksikti: DB hatası olunca sessizce kesiliyordu.~~
+  - ✅ düzeltildi: postgres, mysql ve sqlite loader'ları artık `QueryFailed` fırlatıyor.
+
+- ~~MySQL loader farklı return type döndürüyordu: postgres ve sqlite `[dict(row) for row in ...]` dönerken mysql raw `fetchall()` döndürüyordu.~~
+  - ✅ düzeltildi: üçü de artık `[dict(row) for row in ...]` döner.
+
+- ~~DB port validation yoktu: `-1` veya `999999` gibi geçersiz port değerleri config'den geçiyordu.~~
+  - ✅ düzeltildi: port 1-65535 aralığında olmalı, dışında `ConfigurationError` fırlatılıyor.
+
+- ~~`to_list()` JSON parse hatalarını sessizce yutuyordu: `[doc1, doc2]` gibi geçersiz JSON array gelince uyarı vermeden comma-split'e fallback yapıyordu.~~
+  - ✅ düzeltildi: artık warning logu basıyor.
+
+- ~~`setup_check.py` gereksiz script: dependency check'ini zaten import hataları yapıyor, `.env` kontrolü de opsiyonel.~~
+  - ✅ silindi.
+
+- ~~`retrieval_eval.py` return dict'inde `"passed"` key'i eksikti.~~
+  - ✅ düzeltildi: artık threshold karşılaştırması yapıp `"passed"` dönüyor.
+
+- ~~`main.py` truncated: `log.info`, return statement ve `if __name__` bloğu eksikti.~~
+  - ✅ düzeltildi: tamamlandı, pass rate kontrolü ve exit code logic'i eklendi.
 
 ## Quick Start
 
@@ -145,12 +171,6 @@ Bu row'ları hem database üzerinden hem de doğrudan JSON/CSV file üzerinden v
 ```bash
 pip install -r requirements.txt
 cp .env.example .env
-```
-
-İsteğe bağlı sanity check:
-
-```bash
-python setup_check.py
 ```
 
 ## Environment Variables
@@ -458,22 +478,34 @@ JSON/CSV input için gerekli field'lar yukarıdaki row contract ile aynıdır.
 
 ## Reports
 
-Reporter stdout'a bir dashboard çıkartır ve `--no-save` kullanılmazsa şu çıktıları verir:
+Reporter stdout'a bir dashboard çıkartır ve `--no-save` kullanılmadıysa `reports/` altına CSV ve JSON dosyaları yazar.
 
-- `reports/eval_results_<timestamp>.csv`
-- `reports/eval_results_<timestamp>.json`
+```
+====================================================
+  EVAL DASHBOARD
+====================================================
+  Total   : 8
+  Passed  : 7
+  Failed  : 1
+  Rate    : 87.5%
+  Time    : 2026-04-06 22:28
+----------------------------------------------------
+  Breakdown:
+    retrieval    : 2/3 (67%)
+    sql          : 3/3 (100%)
+    text         : 2/2 (100%)
+----------------------------------------------------
+  Retrieval Averages:
+    Precision@K : 0.3889
+    Recall@K    : 0.6667
+    NDCG@K      : 0.6399
+====================================================
 
-Dashboard şunları gösterir:
+  [FAIL] Failed:
+    [retrieval] What are the business hours?
+```
 
-- Toplam / passed / failed / rate
-- Evaluator türüne göre breakdown
-- Retrieval ortalamaları (avg precision, recall, NDCG)
-- Fail eden case'lerin listesi
-- raporların tam dosya yolu terminale yazdırılıyor
-
-## Test
-
-Tüm testleri çalıştırmak için:
+## Testler
 
 ```bash
 python -m pytest tests -q

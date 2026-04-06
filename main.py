@@ -155,7 +155,7 @@ def _validate_case(case: dict) -> None:
 def _evaluate(test_cases: list[dict], *, save: bool = True) -> list[dict]:
     results = []
 
-    for i, case in enumerate(test_cases, 1):
+    for case in test_cases:
         _validate_case(case)
         eval_type = _require_text(case, "type").lower()
         handler = _DISPATCH.get(eval_type)
@@ -303,11 +303,7 @@ def main() -> int:
     log.info("done -> %d/%d passed (%.1f%%)", passed, total, pass_rate)
 
     if pass_rate < args.fail_under:
-        log.error(
-            "pass rate %.1f%% is below threshold %.1f%% -> exit 1",
-            pass_rate,
-            args.fail_under,
-        )
+        log.warning("pass rate %.1f%% is below --fail-under %.1f%%", pass_rate, args.fail_under)
         return 1
     return 0
 

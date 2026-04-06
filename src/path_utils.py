@@ -8,13 +8,12 @@ __all__ = ["display_path"]
 
 
 def _filename(path: str | Path) -> str:
-    return PureWindowsPath(str(path)).name or str(path)
+    return PureWindowsPath(str(path)).name or Path(str(path)).name or str(path)
 
 
 def display_path(path: str | Path) -> str:
-    candidate = Path(path)
     try:
-        rel = str(candidate.resolve().relative_to(PROJECT_ROOT.resolve()))
+        rel = str(Path(path).resolve().relative_to(PROJECT_ROOT.resolve()))
     except (OSError, RuntimeError, ValueError):
         return _filename(path)
 

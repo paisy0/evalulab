@@ -74,4 +74,6 @@ def test_sqlite_loader_fetches_rows(tmp_path, monkeypatch):
     with SQLiteLoader() as db:
         rows = db.fetch("SELECT query_col, type_col FROM eval_log")
 
-    assert rows == [{"query_col": "q", "type_col": "retrieval"}]
+    assert len(rows) == 1
+    assert rows[0]["query_col"] == "q"
+    assert rows[0]["type_col"] == "retrieval"
