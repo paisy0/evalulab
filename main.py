@@ -126,17 +126,11 @@ def _validate_source_row(row: dict, source) -> None:
         if not source.sql_column:
             raise ConfigurationError("Missing mapping: EVAL_COL_SQL")
         _require_source_text(row, source.sql_column)
-        if source.keywords_column and source.keywords_column in row:
-            _require_source_list(row, source.keywords_column)
         return
     if eval_type == "text":
         if not source.answer_column:
             raise ConfigurationError("Missing mapping: EVAL_COL_ANSWER")
         _require_source_text(row, source.answer_column)
-        if source.keywords_column and source.keywords_column in row:
-            _require_source_list(row, source.keywords_column)
-        if source.reference_answer_column and source.reference_answer_column in row:
-            _require_source_text(row, source.reference_answer_column)
         return
     raise UnknownEvalType(eval_type)
 

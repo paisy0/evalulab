@@ -52,7 +52,7 @@ def check_sql_keywords(sql: str, expected: list[str]) -> dict:
     if not keywords:
         return {
             "checked": False,
-            "all_present": True,
+            "all_present": False,
             "missing": [],
         }
 
