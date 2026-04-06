@@ -10,7 +10,7 @@ from src.path_utils import display_path
 
 __all__ = ["load_json_cases", "load_csv_cases"]
 
-_LIST_COLUMNS = {"retrieved", "relevant", "expected_keywords"}
+_LIST_COLUMNS = {"retrieved", "retrieved_docs", "relevant", "relevant_docs", "expected_keywords"}
 
 
 def _normalize_case_rows(rows: list[dict]) -> list[dict]:

@@ -29,6 +29,9 @@ def check_sql_syntax(sql: str) -> dict:
     if not parsed or parsed[0] is None:
         return {"valid": False, "error": "Parser returned nothing"}
 
+    if len(parsed) > 1:
+        return {"valid": False, "error": f"Multiple statements found ({len(parsed)})"}
+
     stmt = parsed[0]
     if not isinstance(stmt, _SQL_STATEMENT_TYPES):
         return {
